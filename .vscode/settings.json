@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "/home/teslim/Projects/python/pokemon-type/.env/bin/python3",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
+}
