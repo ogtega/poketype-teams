@@ -19,16 +19,16 @@ def getMatchup(t: Tuple[str], o: str) -> float:
 types: List[str] = table.index.values[1:]
 
 impossible: Set[Tuple[str]] = set([
-    ('Fire', 'Steel'), ('Fairy', 'Fire'), ('Electric', 'Fighting'),
+    ('Fire', 'Grass'), ('Fairy', 'Fire'), ('Electric', 'Fighting'),
     ('Ice', 'Poison'), ('Fighting', 'Ground'), ('Fairy', 'Fighting'),
     ('Poison', 'Psychic'), ('Poison', 'Steel'), ('Fairy', 'Ground'),
-    ('Bug', 'Dragon'), ('Bug', 'Dark'), ('Ghost', 'Rock')
+    ('Bug', 'Dragon'), ('Bug', 'Dark'), ('Ghost', 'Rock'),
 ])
 
 legends:  Set[Tuple[str]] = set([
-    ('Fire', 'Water'), ('Fire, Steel'), ('Dragon', 'Ice'),
+    ('Fire', 'Water'), ('Fire', 'Steel'), ('Dragon', 'Ice'),
     ('Fighting', 'Rock'), ('Fighting', 'Ghost'), ('Ghost', 'Psychic'),
-    ('Dragon', 'Psychic'), ('Dragon', 'Fairy')
+    ('Dragon', 'Psychic')
 ])
 
 tcombos: Set[Tuple[str]] = set()
@@ -78,16 +78,24 @@ def buildTeam(
         c = comboList[i]
 
         if len(weakness[c] & weak) == 0:
-            team = team + [c]
-
-            if n == 5:
+            if n == 6:
                 teams.append(team)
             else:
                 rem = set(comboList[i+1:])
-                for p in buildTeam(team, rem, weak | weakness[c], n + 1):
+                for p in buildTeam(team + [c], rem, weak | weakness[c], n + 1):
                     teams = teams + [p]
     return teams
 
 
-for team in buildTeam():
+def weight(tm):
+    res = set()
+    weak = set()
+
+    for t in tm:
+        res = resistance[t] | res
+        weak = weakness[t] | weak
+    return len(res) - len(weak)
+
+
+for team in sorted(buildTeam(), key=weight, reverse=True):
     print(team)
