@@ -70,7 +70,7 @@ def buildTeam(
         combos: Set[Tuple[str]] = tcombos,
         weak: Set[str] = set(),
         n: int = 0
-) -> List[List[Tuple(str)]]:
+) -> List[List[Tuple[str]]]:
     teams = list()
     comboList = list(combos)
 
