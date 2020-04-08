@@ -68,22 +68,20 @@ for c in tcombos:
 def buildTeam(
         team: List[Tuple[str]] = [],
         combos: Set[Tuple[str]] = tcombos,
-        weak: Set[str] = set(),
-        n: int = 0
+        weak: Set[str] = set()
 ) -> List[List[Tuple[str]]]:
     teams = list()
     comboList = list(combos)
 
-    for i in range(len(comboList)):
-        c = comboList[i]
+    if len(team) == 6:
+        return [team]
+    else:
+        for i in range(len(comboList)):
+            c = comboList[i]
 
-        if len(weakness[c] & weak) == 0:
-            if n == 6:
-                teams.append(team)
-            else:
+            if len(weakness[c] & weak) == 0:
                 rem = set(comboList[i+1:])
-                for p in buildTeam(team + [c], rem, weak | weakness[c], n + 1):
-                    teams = teams + [p]
+                teams = teams + buildTeam(team + [c], rem, weak | weakness[c])
     return teams
 
 
@@ -98,4 +96,6 @@ def weight(tm):
 
 
 for team in sorted(buildTeam(), key=weight, reverse=True):
-    print(team)
+    w = weight(team)
+    if w > 0:
+        print(f'{w}: {team}')
