@@ -1,16 +1,20 @@
 import pandas as pd
-from functools import reduce
 from typing import List, Set, Tuple, Dict
 
 # Use pandas to create a dataframe of the pokemon type matchups
 table = pd.read_csv(
-    'https://raw.githubusercontent.com/robinsones/pokemon-chart/master/chart.csv',
+    'https://raw.githubusercontent.com' +
+    '/robinsones/pokemon-chart/master/chart.csv',
     index_col=0
 )
 
-# Return a floating-point number representing the effectiveness of a type combo to any one type
+
+# Return a floating-point number representing the effectiveness of a type
+# combo to any one type
 def getMatchup(t: Tuple[str], o: str) -> float:
-    return (table.loc[o, t[0]] if len(t) is 1 else table.loc[o, t[0]] * table.loc[o, t[1]])
+    return (table.loc[o, t[0]] if len(t) == 1
+            else table.loc[o, t[0]] * table.loc[o, t[1]])
+
 
 types: List[str] = table.index.values[1:]
 
@@ -22,15 +26,17 @@ impossible: Set[Tuple[str]] = set([
 ])
 
 legends:  Set[Tuple[str]] = set([
-    ('Fire', 'Water'), ('Fire, Steel'), ('Dragon', 'Ice'), ('Fighting', 'Rock'),
-    ('Fighting', 'Ghost'), ('Ghost', 'Psychic'), ('Dragon', 'Psychic'), ('Dragon', 'Fairy')
+    ('Fire', 'Water'), ('Fire, Steel'), ('Dragon', 'Ice'),
+    ('Fighting', 'Rock'), ('Fighting', 'Ghost'), ('Ghost', 'Psychic'),
+    ('Dragon', 'Psychic'), ('Dragon', 'Fairy')
 ])
 
 tcombos: Set[Tuple[str]] = set()
+
 # Create every unique combination of any one or two types
 for t in types:
     for tt in types:
-        # If the types are different create a tuple of the types sorted alphabetically
+        # If the types are different create a sorted tuple of the types
         if t is not tt:
             tcombos.add(tuple(sorted([t, tt])))
         else:
@@ -58,18 +64,27 @@ for c in tcombos:
     weakness[c] = weak.difference(resist)
     resistance[c] = resist
 
-def buildTeam(team: List[Tuple[str]] = [], combos: Set[Tuple[str]] = tcombos, weak: Set[str] = set(), n: int = 0):
+
+def buildTeam(
+        team: List[Tuple[str]] = [],
+        combos: Set[Tuple[str]] = tcombos,
+        weak: Set[str] = set(),
+        n: int = 0
+) -> List[List[Tuple(str)]]:
     teams = list()
     comboList = list(combos)
 
     for i in range(len(comboList)):
         c = comboList[i]
 
-        if len(weakness[c] & weak) is 0:
-            if n is 5:
-                teams.append(team + [c])
+        if len(weakness[c] & weak) == 0:
+            team = team + [c]
+
+            if n == 5:
+                teams.append(team)
             else:
-                for p in buildTeam(team + [c], set(comboList[i+1:]), weak | weakness[c], n + 1):
+                rem = set(comboList[i+1:])
+                for p in buildTeam(team, rem, weak | weakness[c], n + 1):
                     teams = teams + [p]
     return teams
 
