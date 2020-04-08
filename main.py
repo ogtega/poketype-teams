@@ -99,4 +99,3 @@ for team in sorted(buildTeam(), key=weight, reverse=True):
     w = weight(team)
     if w > 0:
         print(f'{w}: {team}')
-
