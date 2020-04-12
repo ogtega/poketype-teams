@@ -92,11 +92,11 @@ def weight(tm):
     for t in tm:
         res = resistance[t] | res
         weak = weakness[t] | weak
-    return len(res) - len(weak)
+    weak = weak - res
+    return len(res) / len(weak | res)
 
 
 for team in sorted(buildTeam(), key=weight, reverse=True):
     w = weight(team)
-    if w > 0:
-        print(f'{w}: {team}')
-
+    if w >= 1:
+        print(f'{w:.2f}: {team}')
