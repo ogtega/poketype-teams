@@ -11,6 +11,12 @@ pip install -r requirements.txt
 python3 main.py
 ```
 
+## Regex Type Search
+
+```
+^(?=.*('Type1', 'Type2'))(?=.*('Type1', 'Type2')).*$
+```
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
